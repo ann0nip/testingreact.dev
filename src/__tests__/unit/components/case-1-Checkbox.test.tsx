@@ -11,13 +11,46 @@ import Checkbox from '../../../components/Checkbox'
  * should.
  */
 describe('The <Checkbox /> component', () => {
-  it('❌ Should render the label and checkbox the user will see', () => {})
+  const defaultProps = {
+    label: 'string',
+    id: 'string',
+    checked: false,
+    onChange: jest.fn(),
+  }
+  const setupCheckbox = (props = defaultProps) =>
+    render(<Checkbox {...props} />)
 
-  it('❌ Should make the checkbox accessible by setting the id and htmlFor attributes on label and checkbox', () => {})
+  it('❌ Should render the label and checkbox the user will see', () => {
+    const { asFragment } = setupCheckbox()
 
-  it('❌ Should call the onChange handler when it is provided', () => {})
+    expect(asFragment()).toMatchSnapshot()
+  })
 
-  it('❌ Should change state correctly when clicked (checked and unchecked)', () => {})
+  it('❌ Should make the checkbox accessible by setting the id and htmlFor attributes on label and checkbox', () => {
+    const { getByLabelText } = setupCheckbox()
 
-  it('❌ should not fail any accessibility tests', async () => {})
+    expect(getByLabelText(defaultProps.label)).toBeInTheDocument()
+  })
+
+  it('❌ Should call the onChange handler when it is provided', () => {
+    const { getByLabelText } = setupCheckbox()
+    const checkbox = getByLabelText(defaultProps.label)
+
+    fireEvent.click(checkbox)
+
+    expect(defaultProps.onChange).toBeCalled()
+  })
+
+  it('❌ Should change state correctly when clicked (checked and unchecked)', () => {
+    const { getByLabelText } = setupCheckbox({ ...defaultProps, checked: true })
+    const checkbox = getByLabelText(defaultProps.label)
+
+    expect(checkbox).toBeChecked()
+  })
+
+  it('❌ should not fail any accessibility tests', async () => {
+    const { container } = setupCheckbox()
+
+    expect(await axe(container)).toHaveNoViolations()
+  })
 })
